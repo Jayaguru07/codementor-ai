@@ -1,0 +1,98 @@
+[
+  {
+    "id": "variables",
+    "name": "Variables",
+    "keywords": ["NameError", "undefined", "variable", "assignment", "declaration", "not defined"],
+    "description": "Variables store data values in memory. In Python, a variable must be defined by assigning a value before it can be referenced or evaluated.",
+    "learning_tip": "Always declare and assign a value to a variable before referencing it in your code.",
+    "example": "# Assigning a variable before use:\nx = 10\nprint(x)"
+  },
+  {
+    "id": "data_types",
+    "name": "Data Types",
+    "keywords": ["TypeError", "unsupported operand", "type", "conversion", "string", "int", "concatenate"],
+    "description": "Data types define the type of data a variable holds (e.g., int, str, float, bool, list). Python is dynamically typed but strongly typed, meaning incompatible data types cannot be implicitly combined.",
+    "learning_tip": "Use explicit type casting functions like str(), int(), or float() when combining different data types.",
+    "example": "# Explicit string conversion:\nage = 20\nprint('Age is ' + str(age))"
+  },
+  {
+    "id": "if_else",
+    "name": "If/Else",
+    "keywords": ["SyntaxError", "if", "else", "elif", "condition", "boolean", "comparison", "colon"],
+    "description": "Conditional statements allow code execution based on whether a boolean condition evaluates to True or False. Don't forget the colon (:) at the end of conditional lines.",
+    "learning_tip": "Ensure conditional blocks end with a colon (:) and nested statements are properly indented.",
+    "example": "x = 10\nif x > 5:\n    print('Greater')\nelse:\n    print('Smaller')"
+  },
+  {
+    "id": "loops",
+    "name": "Loops",
+    "keywords": ["IndentationError", "for", "while", "iteration", "infinite", "range", "loop"],
+    "description": "Loops repeat a block of code multiple times. 'for' loops iterate over sequences, while 'while' loops continue as long as a condition remains True.",
+    "learning_tip": "Verify loop termination conditions to avoid infinite loops and ensure body blocks are indented.",
+    "example": "for i in range(5):\n    print(i)"
+  },
+  {
+    "id": "functions",
+    "name": "Functions",
+    "keywords": ["TypeError", "arguments", "positional", "parameters", "return", "def", "call"],
+    "description": "Functions are reusable blocks of code that perform a specific task. They take parameters as input and return results using the 'return' statement.",
+    "learning_tip": "Match the number and type of arguments passed in a function call with its parameter signature.",
+    "example": "def add(a, b):\n    return a + b\n\nresult = add(5, 3)"
+  },
+  {
+    "id": "lists",
+    "name": "Lists",
+    "keywords": ["IndexError", "list index out of range", "array", "slice", "append", "pop", "element"],
+    "description": "Lists are ordered, mutable collections of items indexed starting from 0. Accessing an index outside the valid range [0, len(list)-1] raises an IndexError.",
+    "learning_tip": "Check the length of a list with len(my_list) before indexing to prevent IndexError.",
+    "example": "numbers = [1, 2, 3]\nif len(numbers) > 0:\n    print(numbers[0])"
+  },
+  {
+    "id": "dictionaries",
+    "name": "Dictionaries",
+    "keywords": ["KeyError", "dictionary", "dict", "key", "mapping", "get", "hashmap"],
+    "description": "Dictionaries store key-value pairs. Querying a non-existent key directly via dict[key] causes a KeyError. Use dict.get(key, default) for safe retrieval.",
+    "learning_tip": "Use the .get(key) method or check 'if key in dict:' to avoid KeyError when accessing dictionary values.",
+    "example": "student = {'name': 'Alice'}\nage = student.get('age', 0)"
+  },
+  {
+    "id": "classes",
+    "name": "Classes",
+    "keywords": ["AttributeError", "class", "object", "self", "instance", "method", "init"],
+    "description": "Classes are blueprints for creating objects (OOP). Methods inside a class must include 'self' as their first parameter to access instance attributes.",
+    "learning_tip": "Always pass 'self' as the first parameter to instance methods and initialize variables inside __init__.",
+    "example": "class Student:\n    def __init__(self, name):\n        self.name = name"
+  },
+  {
+    "id": "exceptions",
+    "name": "Exceptions",
+    "keywords": ["ZeroDivisionError", "try", "except", "error", "catch", "exception", "raise"],
+    "description": "Exceptions are runtime errors detected during code execution. Use try-except blocks to gracefully handle potential runtime failures.",
+    "learning_tip": "Wrap code prone to runtime failures (like division or file input) in try-except blocks.",
+    "example": "try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print('Cannot divide by zero')"
+  },
+  {
+    "id": "scope",
+    "name": "Scope",
+    "keywords": ["UnboundLocalError", "global", "local", "scope", "enclosing", "variable scope"],
+    "description": "Scope defines where variables are accessible in code. Local variables exist inside functions, while global variables exist outside functions.",
+    "learning_tip": "To modify a variable declared outside a function, declare it with the 'global' keyword inside the function.",
+    "example": "x = 10\ndef update():\n    global x\n    x = 20"
+  },
+  {
+    "id": "imports",
+    "name": "Imports",
+    "keywords": ["ModuleNotFoundError", "ImportError", "import", "from", "module", "library", "package"],
+    "description": "Imports bring external modules or custom Python scripts into your project scope. Ensure the module name is correctly spelled and installed.",
+    "learning_tip": "Double-check package names and install missing libraries via 'pip install <package>'.",
+    "example": "import math\nprint(math.sqrt(16))"
+  },
+  {
+    "id": "file_handling",
+    "name": "File Handling",
+    "keywords": ["FileNotFoundError", "IOError", "open", "read", "write", "file", "with open"],
+    "description": "File handling allows reading from and writing to files on disk. Using the 'with open(...) as f:' context manager ensures files are automatically closed.",
+    "learning_tip": "Use the 'with open()' pattern to handle file resources safely without leaving file handles open.",
+    "example": "with open('data.txt', 'w') as f:\n    f.write('Hello World')"
+  }
+]
