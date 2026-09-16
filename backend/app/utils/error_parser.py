@@ -28,6 +28,57 @@ class ErrorParser:
             }
 
     @staticmethod
+    def check_static_analysis(code: str) -> Optional[Dict[str, Any]]:
+        """
+        Statically inspects AST for obvious runtime errors (undefined names, division by zero)
+        without executing student code.
+        """
+        try:
+            tree = ast.parse(code)
+        except Exception:
+            return None
+
+        # Check for division by zero: e.g. 10 / 0
+        for node in ast.walk(tree):
+            if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Div, ast.FloorDiv, ast.Mod)):
+                if isinstance(node.right, ast.Constant) and node.right.value == 0:
+                    return {
+                        "error_type": "ZeroDivisionError",
+                        "error_message": "division by zero",
+                        "line": getattr(node, "lineno", 1),
+                    }
+
+        # Check for undefined names in top-level script
+        import builtins as _py_builtins
+        defined_names = set(dir(_py_builtins))
+        defined_names.update({"__name__", "__doc__", "__package__", "__file__"})
+
+        # Collect definitions
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store):
+                defined_names.add(node.id)
+            elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                defined_names.add(node.name)
+            elif isinstance(node, ast.Import):
+                for alias in node.names:
+                    defined_names.add(alias.asname or alias.name)
+            elif isinstance(node, ast.ImportFrom):
+                for alias in node.names:
+                    defined_names.add(alias.asname or alias.name)
+
+        # Check loaded names
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Load):
+                if node.id not in defined_names:
+                    return {
+                        "error_type": "NameError",
+                        "error_message": f"name '{node.id}' is not defined",
+                        "line": getattr(node, "lineno", 1),
+                    }
+
+        return None
+
+    @staticmethod
     def parse_traceback(stderr: str) -> Dict[str, Any]:
         """
         Parses Python error traceback from subprocess stderr.

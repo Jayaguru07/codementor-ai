@@ -28,14 +28,24 @@ from typing import Any, Dict, List, Optional
 import requests
 from dotenv import load_dotenv
 
-from prompts import (
-    SYSTEM_PROMPT,
-    CodeAnalysisRequest,
-    CodeAnalysisResult,
-    SourceItem,
-    build_analysis_prompt,
-)
-from rag import RAGEngine
+try:
+    from ai.prompts import (
+        SYSTEM_PROMPT,
+        CodeAnalysisRequest,
+        CodeAnalysisResult,
+        SourceItem,
+        build_analysis_prompt,
+    )
+    from ai.rag import RAGEngine
+except ImportError:
+    from prompts import (
+        SYSTEM_PROMPT,
+        CodeAnalysisRequest,
+        CodeAnalysisResult,
+        SourceItem,
+        build_analysis_prompt,
+    )
+    from rag import RAGEngine
 
 # Load environment variables from ai/.env or root .env
 AI_DIR = Path(__file__).resolve().parent

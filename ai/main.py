@@ -24,9 +24,14 @@ AI_DIR = Path(__file__).resolve().parent
 if str(AI_DIR) not in sys.path:
     sys.path.insert(0, str(AI_DIR))
 
-from prompts import CodeAnalysisResult
-from rag import INDEX_FILE, METADATA_FILE, RAGEngine
-from llm_service import LLMService
+try:
+    from ai.prompts import CodeAnalysisResult
+    from ai.rag import INDEX_FILE, METADATA_FILE, RAGEngine
+    from ai.llm_service import LLMService
+except ImportError:
+    from prompts import CodeAnalysisResult
+    from rag import INDEX_FILE, METADATA_FILE, RAGEngine
+    from llm_service import LLMService
 
 
 def print_banner(title: str) -> None:

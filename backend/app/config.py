@@ -15,11 +15,12 @@ class Settings(BaseSettings):
     EXECUTION_TIMEOUT: int = 5
     
     LLM_API_KEY: str = ""
-    LLM_MODEL: str = "gpt-3.5-turbo"
+    LLM_MODEL: str = "gpt-4o-mini"
+    LLM_BASE_URL: str = "https://api.openai.com/v1"
     LLM_API_URL: str = "https://api.openai.com/v1/chat/completions"
 
     class Config:
-        env_file = ".env"
+        env_file = [".env", "ai/.env", "backend/.env"]
         env_file_encoding = "utf-8"
         extra = "ignore"
 

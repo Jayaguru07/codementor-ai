@@ -122,7 +122,10 @@ class RAGEngine:
 
         # 5. Load Embedding Model
         if self._model is None:
-            from ingest import get_embedding_generator
+            try:
+                from ai.ingest import get_embedding_generator
+            except ImportError:
+                from ingest import get_embedding_generator
             model, _ = get_embedding_generator()
             self._model = model
 

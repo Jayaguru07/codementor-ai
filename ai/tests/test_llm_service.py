@@ -13,8 +13,12 @@ import json
 from unittest.mock import MagicMock, patch
 import pytest
 
-from prompts import CodeAnalysisRequest, CodeAnalysisResult, SourceItem
-from llm_service import LLMService
+try:
+    from ai.prompts import CodeAnalysisRequest, CodeAnalysisResult, SourceItem
+    from ai.llm_service import LLMService
+except ImportError:
+    from prompts import CodeAnalysisRequest, CodeAnalysisResult, SourceItem
+    from llm_service import LLMService
 
 
 # -----------------------------------------------------------------------------
