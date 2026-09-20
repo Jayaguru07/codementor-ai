@@ -2,6 +2,8 @@ import { TrendingUp } from "lucide-react";
 
 interface ProgressCardProps {
   score: number;
+  solvedCount: number;
+  totalCount: number;
 }
 
 function getScoreLabel(score: number): string {
@@ -18,8 +20,11 @@ function getScoreColor(score: number): string {
   return "text-red-400";
 }
 
-export function ProgressCard({ score }: ProgressCardProps) {
-  const circumference = 2 * Math.PI * 52;
+export function ProgressCard({
+  score,
+  solvedCount,
+  totalCount,
+}: ProgressCardProps) {  const circumference = 2 * Math.PI * 52;
   const offset = circumference - (score / 100) * circumference;
 
   return (
@@ -75,7 +80,7 @@ export function ProgressCard({ score }: ProgressCardProps) {
           <div className="flex items-center gap-1.5 mt-2">
             <span className="w-2 h-2 rounded-full bg-cyan-500" />
             <span className="text-xs" style={{ color: "var(--text-secondary)" }}>
-              Based on 24 solved problems
+              Based on {solvedCount} solved out of {totalCount} analyses
             </span>
           </div>
         </div>

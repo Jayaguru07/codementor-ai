@@ -1,1 +1,33 @@
+# Environment and Secrets
+.env
+*.env
+ai/.env
+backend/.env
 
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+backend/venv/
+
+# AI Generated Vector Store
+ai/vector_store/
+vector_store/
+
+# Database files
+*.db
+
+# IDE and OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
