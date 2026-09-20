@@ -51,12 +51,13 @@ export interface TopicProgress {
 
 export interface ProgressData {
   overall_score: number;
+  solved_count: number;
+  total_count: number;
   topics: TopicProgress[];
   error_patterns: string[];
   streak_days: number;
   weekly_activity: boolean[];
 }
-
 export interface QuizQuestion {
   question: string;
   options: string[];

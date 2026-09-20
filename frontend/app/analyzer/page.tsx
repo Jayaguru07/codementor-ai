@@ -231,9 +231,16 @@ export default function AnalyzerPage() {
                   concept={result.concept!}
                   relatedTopics={result.related_topics}
                 />
-                <CorrectedCode code={result.corrected_code!} language={language} />
+
+                <CorrectedCode
+                  code={result.corrected_code!}
+                  language={language}
+                />
+
                 <LearningTip tip={result.learning_tip!} />
+
                 <QuickCheck
+                  concept={result.concept}
                   selectedAnswer={selectedQuizAnswer}
                   onSelect={setSelectedQuizAnswer}
                 />

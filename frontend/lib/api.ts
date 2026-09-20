@@ -2,17 +2,7 @@
 // lib/api.ts
 // Centralized API service layer.
 //
-// Currently uses MOCK DATA with simulated network delay.
-//
-// TO CONNECT THE REAL BACKEND:
-//   1. Set NEXT_PUBLIC_API_URL in .env.local (already done)
-//   2. Replace each mock function body below with a real fetch() call.
-//   3. Do NOT modify any UI components — only this file.
-//
-// Backend endpoint contract:
-//   POST /api/analyze  →  AnalyzeResponse
-//   GET  /api/history  →  HistoryItem[]
-//   GET  /api/progress →  ProgressData
+// Connects the frontend to the real FastAPI backend.
 // ============================================================
 
 import type {
@@ -20,162 +10,21 @@ import type {
   AnalyzeResponse,
   HistoryItem,
   ProgressData,
-  QuizQuestion,
 } from "@/types/analysis";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-/** Simulated network delay (ms) — remove when using real backend */
-const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+// ─── Quiz ────────────────────────────────────────────────────
+// Temporary static quiz.
+// This is not used for Dashboard, History, or Progress data.
 
-// ─── Mock data ───────────────────────────────────────────────
 
-const MOCK_ERROR_RESPONSE: AnalyzeResponse = {
-  success: false,
-  error_type: "IndexError",
-  error_message: "list index out of range",
-  severity: "medium",
-  line: 3,
-  explanation:
-    "The code attempts to access index 5 of the list 'numbers', but the list only contains 3 elements at indexes 0, 1, and 2. Python raises an IndexError whenever you try to access an index that does not exist in the list.",
-  concept: "List Indexing",
-  related_topics: ["Arrays", "Loops", "Zero-based indexing"],
-  corrected_code: `numbers = [10, 20, 30]\n\n# Use a valid index (0 to len(numbers)-1)\nprint(numbers[2])  # Output: 30`,
-  learning_tip:
-    "Python uses zero-based indexing. For a list with n elements, valid indexes range from 0 to n−1. Always check len(list) before accessing by index.",
-};
 
-const MOCK_SUCCESS_RESPONSE: AnalyzeResponse = {
-  success: true,
-  explanation: "Your code executed successfully without any errors.",
-  concept: "Basic Output",
-  related_topics: ["print()", "Variables", "Data Types"],
-  corrected_code: "",
-  learning_tip:
-    "Great code! Keep writing clean, readable programs with meaningful variable names.",
-  code_quality: {
-    correctness: 95,
-    readability: 82,
-    efficiency: 78,
-  },
-  suggested_improvement:
-    "Consider adding a comment explaining what the code does, and use f-strings for cleaner string formatting.",
-};
-
-const MOCK_HISTORY: HistoryItem[] = [
-  {
-    id: "1",
-    date: "Today, 10:30 AM",
-    language: "python",
-    error_type: "IndexError",
-    status: "solved",
-    code_snippet: 'numbers = [10, 20, 30]\nprint(numbers[5])',
-    analysis: MOCK_ERROR_RESPONSE,
-  },
-  {
-    id: "2",
-    date: "Today, 08:15 AM",
-    language: "java",
-    error_type: "NullPointerException",
-    status: "solved",
-    code_snippet: 'String s = null;\nSystem.out.println(s.length());',
-    analysis: {
-      ...MOCK_ERROR_RESPONSE,
-      error_type: "NullPointerException",
-      error_message: "Cannot invoke method on null object",
-      concept: "Null Safety",
-      related_topics: ["References", "Null Checks", "Optional"],
-    },
-  },
-  {
-    id: "3",
-    date: "Yesterday, 04:45 PM",
-    language: "cpp",
-    error_type: "Segmentation Fault",
-    status: "review",
-    code_snippet: 'int arr[3] = {1, 2, 3};\ncout << arr[10];',
-    analysis: {
-      ...MOCK_ERROR_RESPONSE,
-      error_type: "Segmentation Fault",
-      error_message: "Memory access violation",
-      concept: "Memory Management",
-      related_topics: ["Pointers", "Arrays", "Stack Memory"],
-    },
-  },
-  {
-    id: "4",
-    date: "Yesterday, 02:00 PM",
-    language: "javascript",
-    error_type: "TypeError",
-    status: "solved",
-    code_snippet: 'const x = undefined;\nconsole.log(x.name);',
-    analysis: {
-      ...MOCK_ERROR_RESPONSE,
-      error_type: "TypeError",
-      error_message: "Cannot read properties of undefined",
-      concept: "Type Coercion",
-      related_topics: ["undefined", "null", "Type Checking"],
-    },
-  },
-  {
-    id: "5",
-    date: "2 days ago",
-    language: "python",
-    error_type: "RecursionError",
-    status: "review",
-    code_snippet: 'def factorial(n):\n    return n * factorial(n)',
-    analysis: {
-      ...MOCK_ERROR_RESPONSE,
-      error_type: "RecursionError",
-      error_message: "maximum recursion depth exceeded",
-      concept: "Recursion",
-      related_topics: ["Base Case", "Stack Overflow", "Divide & Conquer"],
-    },
-  },
-];
-
-const MOCK_PROGRESS: ProgressData = {
-  overall_score: 78,
-  topics: [
-    { topic: "Arrays", score: 82 },
-    { topic: "Loops", score: 91 },
-    { topic: "Recursion", score: 43 },
-    { topic: "Linked Lists", score: 61 },
-    { topic: "Trees", score: 38 },
-    { topic: "Sorting", score: 74 },
-  ],
-  error_patterns: [
-    "Off-by-one errors",
-    "Null / undefined handling",
-    "Recursion base cases",
-    "Incorrect loop conditions",
-  ],
-  streak_days: 5,
-  weekly_activity: [true, true, false, true, true, true, false],
-};
-
-export const MOCK_QUIZ: QuizQuestion = {
-  question: "What is the last valid index of a list containing 5 elements?",
-  options: ["A.  3", "B.  4", "C.  5", "D.  6"],
-  correct_index: 1,
-  explanation:
-    "Since Python uses zero-based indexing, a list with 5 elements has indexes 0, 1, 2, 3, and 4. The last valid index is 4.",
-};
-
-// ─── API Functions ───────────────────────────────────────────
+// ─── Analyze ─────────────────────────────────────────────────
 
 /**
  * Analyze code and return AI-generated feedback.
- *
- * MOCK MODE: Returns mock data after a simulated delay.
- * REAL MODE: Replace body with:
- *   const res = await fetch(`${API_URL}/api/analyze`, {
- *     method: "POST",
- *     headers: { "Content-Type": "application/json" },
- *     body: JSON.stringify(req),
- *   });
- *   if (!res.ok) throw new Error(`Server error: ${res.status}`);
- *   return res.json();
  */
 export async function analyzeCode(
   req: AnalyzeRequest
@@ -197,11 +46,12 @@ export async function analyzeCode(
 
     try {
       const errorData = await res.json();
+
       if (errorData.detail) {
         message = errorData.detail;
       }
     } catch {
-      // Keep the default error message
+      // Keep the default error message.
     }
 
     throw new Error(message);
@@ -209,32 +59,225 @@ export async function analyzeCode(
 
   return res.json();
 }
+
+// ─── History ─────────────────────────────────────────────────
+
 /**
- * Fetch analysis history.
- *
- * REAL MODE: Replace body with:
- *   const res = await fetch(`${API_URL}/api/history`);
- *   if (!res.ok) throw new Error("Failed to fetch history");
- *   return res.json();
+ * Fetch analysis history from the real backend database.
  */
 export async function getHistory(): Promise<HistoryItem[]> {
-  await delay(500);
-  return MOCK_HISTORY;
+  const res = await fetch(`${API_URL}/api/history?limit=1000`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch history");
+  }
+
+  const data = await res.json();
+
+  return data.items.map((item: any) => ({
+    id: String(item.id),
+    date: new Date(item.timestamp).toLocaleString(),
+    language: item.language,
+    error_type: item.error_type || "No Error",
+    status: item.success ? "solved" : "review",
+    code_snippet: item.code,
+    analysis: {
+      success: item.success,
+      error_type: item.error_type,
+      error_message: item.error_message,
+      line: item.line,
+      explanation: item.explanation,
+      concept: item.concept,
+      corrected_code: item.corrected_code,
+      learning_tip: item.learning_tip,
+    },
+  }));
 }
+
+// ─── Progress ────────────────────────────────────────────────
 
 /**
- * Fetch learning progress data.
- *
- * REAL MODE: Replace body with:
- *   const res = await fetch(`${API_URL}/api/progress`);
- *   if (!res.ok) throw new Error("Failed to fetch progress");
- *   return res.json();
+ * Calculate learning progress from real analysis history.
  */
 export async function getProgress(): Promise<ProgressData> {
-  await delay(500);
-  return MOCK_PROGRESS;
+  const res = await fetch(`${API_URL}/api/history?limit=1000`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch progress data");
+  }
+
+  const data = await res.json();
+  const items = data.items ?? [];
+
+  if (items.length === 0) {
+    return {
+      overall_score: 0,
+      solved_count: 0,
+      total_count: 0,
+      topics: [],
+      error_patterns: [],
+      streak_days: 0,
+      weekly_activity: [false, false, false, false, false, false, false],
+    };
+  }
+
+  // ─── Overall success rate ─────────────────────────────────
+
+  const successful = items.filter(
+    (item: any) => item.success
+  ).length;
+
+  const overallScore = Math.round(
+    (successful / items.length) * 100
+  );
+
+  // ─── Concept mastery ──────────────────────────────────────
+
+  const conceptStats = new Map<
+    string,
+    {
+      total: number;
+      successful: number;
+    }
+  >();
+
+  items.forEach((item: any) => {
+    const concept = item.concept?.trim();
+
+    if (!concept) {
+      return;
+    }
+
+    // Ignore language validation records.
+    if (concept === "Supported Languages") {
+      return;
+    }
+
+    const current = conceptStats.get(concept) ?? {
+      total: 0,
+      successful: 0,
+    };
+
+    current.total += 1;
+
+    if (item.success) {
+      current.successful += 1;
+    }
+
+    conceptStats.set(concept, current);
+  });
+
+  const topics = Array.from(conceptStats.entries())
+    // Only show concepts with enough history
+    // to make the percentage meaningful.
+    .filter(([, stats]) => stats.total >= 2)
+    .map(([topic, stats]) => ({
+      topic,
+      score: Math.round(
+        (stats.successful / stats.total) * 100
+      ),
+    }))
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 8);
+
+  // ─── Error frequency ──────────────────────────────────────
+
+  const errorCounts = new Map<string, number>();
+
+  items.forEach((item: any) => {
+    const error = item.error_type?.trim();
+
+    if (!error || error === "No Error") {
+      return;
+    }
+
+    errorCounts.set(
+      error,
+      (errorCounts.get(error) ?? 0) + 1
+    );
+  });
+
+  const errorPatterns = Array.from(errorCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(
+      ([error, count]) =>
+        `${error} (${count} occurrences)`
+    );
+
+  // ─── Weekly activity ──────────────────────────────────────
+
+  const activityDates = new Set(
+    items.map((item: any) => {
+      return new Date(item.timestamp).toLocaleDateString();
+    })
+  );
+
+  // Sunday -> Saturday
+  const today = new Date();
+
+  const startOfWeek = new Date(today);
+  startOfWeek.setHours(0, 0, 0, 0);
+  startOfWeek.setDate(
+    today.getDate() - today.getDay()
+  );
+
+  const weeklyActivity = Array.from(
+    { length: 7 },
+    (_, index) => {
+      const day = new Date(startOfWeek);
+
+      day.setDate(
+        startOfWeek.getDate() + index
+      );
+
+      return activityDates.has(
+        day.toLocaleDateString()
+      );
+    }
+  );
+
+  // ─── Current learning streak ──────────────────────────────
+
+  const activityDayKeys = new Set(
+    items.map((item: any) => {
+      const date = new Date(item.timestamp);
+
+      date.setHours(0, 0, 0, 0);
+
+      return date.toDateString();
+    })
+  );
+
+  let streakDays = 0;
+
+  const streakDate = new Date();
+  streakDate.setHours(0, 0, 0, 0);
+
+  while (
+    activityDayKeys.has(
+      streakDate.toDateString()
+    )
+  ) {
+    streakDays += 1;
+
+    streakDate.setDate(
+      streakDate.getDate() - 1
+    );
+  }
+
+  // ─── Final progress result ────────────────────────────────
+
+  return {
+    overall_score: overallScore,
+    solved_count: successful,
+    total_count: items.length,
+    topics,
+    error_patterns: errorPatterns,
+    streak_days: streakDays,
+    weekly_activity: weeklyActivity,
+  };
 }
 
-// Export the base URL for reference (e.g., in debug panels)
+// Export API base URL for debugging/reference.
 export { API_URL };
-
