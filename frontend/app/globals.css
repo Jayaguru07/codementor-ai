@@ -1,0 +1,317 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN TOKENS — CSS Custom Properties
+   Applied via data-theme attribute on <html>
+   All components read from these variables — no hardcoded colors
+   ============================================================ */
+
+/* ─── DARK THEME (default) ─────────────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Backgrounds */
+  --bg-base: #030712; /* Deep oceanic navy */
+  --bg-surface: rgba(9, 14, 23, 0.72);
+  --bg-surface-hover: rgba(15, 23, 42, 0.85);
+  --bg-elevated: rgba(11, 17, 32, 0.90);
+  --bg-input: rgba(6, 10, 18, 0.85);
+  --bg-code: rgba(4, 7, 13, 0.95);
+  --bg-sidebar: rgba(6, 11, 20, 0.92);
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.20);
+  --border-accent: rgba(6, 182, 212, 0.35); /* Frosty Cyan */
+
+  /* Text */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --text-accent: #22d3ee; /* Cyan 400 */
+
+  /* Glass effects */
+  --glass-blur: 20px;
+  --glass-shadow: 0 8px 32px rgba(2, 6, 23, 0.60), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --glass-shadow-hover: 0 14px 44px rgba(2, 6, 23, 0.70), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  /* Scrollbar */
+  --scrollbar-track: #030712;
+  --scrollbar-thumb: #1e293b;
+  --scrollbar-thumb-hover: #334155;
+
+  /* Ambient blobs */
+  --blob-1-color: rgba(6, 182, 212, 0.12);  /* Cyan */
+  --blob-2-color: rgba(59, 130, 246, 0.09); /* Ocean Blue */
+  --blob-3-color: rgba(20, 184, 166, 0.07); /* Teal/Mint */
+}
+
+/* ─── LIGHT THEME ────────────────────────────────────────────── */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* Backgrounds */
+  --bg-base: #f0f4f8; /* Crisp icy white */
+  --bg-surface: rgba(255, 255, 255, 0.72);
+  --bg-surface-hover: rgba(255, 255, 255, 0.88);
+  --bg-elevated: rgba(255, 255, 255, 0.94);
+  --bg-input: rgba(248, 250, 252, 0.90);
+  --bg-code: rgba(241, 245, 249, 0.95);
+  --bg-sidebar: rgba(250, 252, 255, 0.90);
+
+  /* Borders */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-medium: rgba(15, 23, 42, 0.14);
+  --border-strong: rgba(15, 23, 42, 0.22);
+  --border-accent: rgba(2, 132, 199, 0.25); /* Azure Blue */
+
+  /* Text */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-accent: #0284c7; /* Azure 600 */
+
+  /* Glass effects */
+  --glass-blur: 20px;
+  --glass-shadow: 0 4px 24px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.90);
+  --glass-shadow-hover: 0 8px 36px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.90);
+
+  /* Scrollbar */
+  --scrollbar-track: #f0f4f8;
+  --scrollbar-thumb: #cbd5e1;
+  --scrollbar-thumb-hover: #94a3b8;
+
+  /* Ambient blobs */
+  --blob-1-color: rgba(2, 132, 199, 0.10); /* Azure Blue */
+  --blob-2-color: rgba(6, 182, 212, 0.08); /* Cyan */
+  --blob-3-color: rgba(20, 184, 166, 0.06); /* Teal */
+}
+
+/* ============================================================
+   GLASS COMPONENT SYSTEM — Reusable utility classes
+   ============================================================ */
+
+@layer utilities {
+
+  /* Base glass card */
+  .glass-card {
+    background: var(--bg-surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--glass-shadow);
+    transition: background 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .glass-card:hover {
+    background: var(--bg-surface-hover);
+    box-shadow: var(--glass-shadow-hover);
+    border-color: var(--border-medium);
+  }
+
+  /* Elevated glass panel (modals, result panels) */
+  .glass-panel {
+    background: var(--bg-elevated);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* Sidebar glass */
+  .glass-sidebar {
+    background: var(--bg-sidebar);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  /* Header glass */
+  .glass-header {
+    background: var(--bg-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  /* Accent glass (violet tinted) */
+  .glass-card-accent {
+    background: var(--bg-surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border-accent);
+    box-shadow: var(--glass-shadow), 0 0 0 1px var(--border-accent);
+  }
+
+  /* Error glass */
+  .glass-card-error {
+    background: var(--bg-surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(239, 68, 68, 0.22);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* Success glass */
+  .glass-card-success {
+    background: var(--bg-surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid rgba(16, 185, 129, 0.22);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* Input glass */
+  .glass-input {
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .glass-input:focus {
+    border-color: var(--border-accent);
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+    outline: none;
+  }
+  .glass-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  /* Text utilities using CSS vars */
+  .text-primary { color: var(--text-primary); }
+  .text-secondary { color: var(--text-secondary); }
+  .text-muted { color: var(--text-muted); }
+  .text-accent-theme { color: var(--text-accent); }
+
+  /* Background utilities */
+  .bg-base { background-color: var(--bg-base); }
+  .bg-surface { background: var(--bg-surface); }
+  .bg-elevated { background: var(--bg-elevated); }
+
+  /* Border utilities */
+  .border-subtle { border-color: var(--border-subtle); }
+  .border-theme-medium { border-color: var(--border-medium); }
+  .border-theme-accent { border-color: var(--border-accent); }
+
+  /* Gradient text */
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(135deg, #22d3ee, #3b82f6);
+  }
+
+  /* Glow */
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.22);
+  }
+
+  /* Editor expand animation */
+  .editor-transition {
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Theme transition — smooth color change across the whole page */
+  .theme-transition,
+  .theme-transition * {
+    transition-property: background, background-color, border-color, color, box-shadow;
+    transition-duration: 250ms;
+    transition-timing-function: ease;
+  }
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    transition: background-color 250ms ease, color 250ms ease;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+}
+
+/* ============================================================
+   AMBIENT BACKGROUND BLOBS
+   ============================================================ */
+
+.bg-blobs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 1;
+}
+
+.bg-blob-1 {
+  width: 600px;
+  height: 600px;
+  background: var(--blob-1-color);
+  top: -150px;
+  right: -100px;
+}
+
+.bg-blob-2 {
+  width: 500px;
+  height: 500px;
+  background: var(--blob-2-color);
+  bottom: -100px;
+  left: -80px;
+}
+
+.bg-blob-3 {
+  width: 350px;
+  height: 350px;
+  background: var(--blob-3-color);
+  top: 45%;
+  left: 35%;
+}
+
+/* ============================================================
+   SELECT DROPDOWN — themed
+   ============================================================ */
+
+select {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+}
+
+select option {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
