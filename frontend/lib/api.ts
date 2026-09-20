@@ -177,21 +177,38 @@ export const MOCK_QUIZ: QuizQuestion = {
  *   if (!res.ok) throw new Error(`Server error: ${res.status}`);
  *   return res.json();
  */
-export async function analyzeCode(req: AnalyzeRequest): Promise<AnalyzeResponse> {
-  // Validate input before sending
+export async function analyzeCode(
+  req: AnalyzeRequest
+): Promise<AnalyzeResponse> {
   if (!req.code.trim()) {
     throw new Error("Please enter some code before analyzing.");
   }
 
-  // MOCK: Simulate backend processing time
-  await delay(2000);
+  const res = await fetch(`${API_URL}/api/analyze`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(req),
+  });
 
-  // Return success response for simple print statements, error otherwise
-  const isSimple = req.code.trim().split("\n").length <= 1 &&
-    !req.code.includes("[");
-  return isSimple ? MOCK_SUCCESS_RESPONSE : MOCK_ERROR_RESPONSE;
+  if (!res.ok) {
+    let message = `Server error: ${res.status}`;
+
+    try {
+      const errorData = await res.json();
+      if (errorData.detail) {
+        message = errorData.detail;
+      }
+    } catch {
+      // Keep the default error message
+    }
+
+    throw new Error(message);
+  }
+
+  return res.json();
 }
-
 /**
  * Fetch analysis history.
  *
@@ -220,3 +237,4 @@ export async function getProgress(): Promise<ProgressData> {
 
 // Export the base URL for reference (e.g., in debug panels)
 export { API_URL };
+

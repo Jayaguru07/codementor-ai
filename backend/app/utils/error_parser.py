@@ -47,6 +47,69 @@ class ErrorParser:
                         "error_message": "division by zero",
                         "line": getattr(node, "lineno", 1),
                     }
+        # Check for obvious out-of-range indexing on literal collections.
+        # Example:
+        # numbers = [10, 20, 30]
+        # print(numbers[5])
+        #
+        # This is static analysis only; student code is never executed.
+        literal_lengths = {}
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                value = node.value
+
+                length = None
+
+                if isinstance(value, (ast.List, ast.Tuple)):
+                    length = len(value.elts)
+
+                elif isinstance(value, ast.Constant) and isinstance(
+                    value.value, (str, bytes)
+                ):
+                    length = len(value.value)
+
+                if length is not None:
+                    for target in node.targets:
+                        if isinstance(target, ast.Name):
+                            literal_lengths[target.id] = length
+
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Subscript):
+                continue
+
+            index = node.slice
+
+            # Python 3.9+: the index is directly in node.slice.
+            if isinstance(index, ast.Constant) and isinstance(index.value, int):
+                index_value = index.value
+
+                collection_length = None
+
+                if isinstance(node.value, ast.Name):
+                    collection_length = literal_lengths.get(node.value.id)
+
+                elif isinstance(node.value, (ast.List, ast.Tuple)):
+                    collection_length = len(node.value.elts)
+
+                elif isinstance(node.value, ast.Constant) and isinstance(
+                    node.value.value, (str, bytes)
+                ):
+                    collection_length = len(node.value.value)
+
+                if collection_length is not None:
+                    valid = (
+                        -collection_length
+                        <= index_value
+                        < collection_length
+                    )
+
+                    if not valid:
+                        return {
+                            "error_type": "IndexError",
+                            "error_message": "list index out of range",
+                            "line": getattr(node, "lineno", 1),
+                        }
 
         # Check for undefined names in top-level script
         import builtins as _py_builtins
